@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Etiquetas de Centros de Carga</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f0f7f0;min-height:100vh}
+:root{--g1:#e8f5e9;--g2:#c8e6c9;--g3:#81c784;--g4:#388e3c;--g5:#1b5e20}
+.app{padding:16px;max-width:900px;margin:0 auto;padding-bottom:110px}
+.topbar{display:flex;align-items:center;gap:10px;margin-bottom:16px;background:#fff;border-radius:12px;padding:12px 16px;border:1px solid var(--g2)}
+.topbar h2{font-size:15px;font-weight:600;color:var(--g5);flex:1}
+.topbar-size{font-size:12px;color:var(--g4);font-weight:600;background:var(--g1);padding:3px 10px;border-radius:20px}
+.label-card{background:#fff;border-radius:12px;border:1px solid var(--g2);padding:16px;margin-bottom:16px}
+.label-header{display:flex;align-items:stretch;gap:0;margin-bottom:14px;background:var(--g5);border-radius:10px;overflow:hidden;box-shadow:0 2px 8px rgba(27,94,32,0.18)}
+.logo-box{width:72px;min-height:68px;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;flex-shrink:0;background:rgba(255,255,255,0.10);border-right:1.5px solid rgba(255,255,255,0.15)}
+.logo-box img{width:100%;height:100%;object-fit:contain}
+.logo-ph{font-size:9px;color:rgba(255,255,255,0.65);text-align:center;line-height:1.5;padding:6px}
+.header-center{flex:1;display:flex;flex-direction:column;justify-content:center;padding:10px 14px;gap:2px}
+.header-label{font-size:9px;font-weight:700;letter-spacing:2px;color:rgba(255,255,255,0.55);text-transform:uppercase}
+.house-name{font-size:18px;font-weight:700;color:#fff;border:none;background:transparent;outline:none;width:100%;padding:0;letter-spacing:.5px}
+.house-name::placeholder{color:rgba(255,255,255,0.4);font-weight:400}
+.house-name:focus{opacity:1}
+.header-right{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 14px;background:rgba(0,0,0,0.12);border-left:1.5px solid rgba(255,255,255,0.1);gap:2px;min-width:70px}
+.header-right-label{font-size:8px;color:rgba(255,255,255,0.5);font-weight:700;letter-spacing:1.5px;text-transform:uppercase}
+.header-right-val{font-size:16px;font-weight:700;color:#fff}
+.circuits-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.circuit-col{display:flex;flex-direction:column;gap:5px}
+.circuit-row{display:flex;align-items:center;gap:6px}
+.cnum{width:26px;height:26px;border-radius:50%;background:var(--g4);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.csel{flex:1;font-size:12px;padding:4px 6px;border:1px solid var(--g2);border-radius:6px;background:#fff;color:#333;outline:none;height:28px;cursor:pointer}
+.csel:focus{border-color:var(--g4)}
+.fabs{position:fixed;bottom:22px;right:22px;display:flex;flex-direction:column;align-items:flex-end;gap:10px;z-index:100}
+.fab{width:50px;height:50px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:21px;box-shadow:0 3px 12px rgba(0,0,0,0.22);transition:transform .15s}
+.fab:active{transform:scale(.93)}
+.fab-main{background:var(--g4);color:#fff;width:56px;height:56px;font-size:24px}
+.fab-green{background:var(--g4);color:#fff}
+.fab-white{background:#fff;color:var(--g4);border:1.5px solid var(--g3);width:44px;height:44px;font-size:18px;position:relative}
+.fab-tip{font-size:11px;background:var(--g5);color:#fff;padding:3px 9px;border-radius:20px;white-space:nowrap;position:absolute;right:50px;top:50%;transform:translateY(-50%);pointer-events:none}
+.sub-fabs{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.hidden{display:none!important}
+.size-picker{position:fixed;bottom:86px;right:22px;background:#fff;border-radius:12px;border:1px solid var(--g2);padding:12px 16px;box-shadow:0 4px 20px rgba(0,0,0,0.14);z-index:200}
+.size-picker p{font-size:12px;color:var(--g4);font-weight:600;margin-bottom:8px}
+.size-btns{display:flex;gap:8px}
+.sbtn{padding:8px 18px;border:1.5px solid var(--g3);border-radius:8px;background:#fff;color:var(--g4);font-weight:600;cursor:pointer;font-size:14px;transition:background .15s}
+.sbtn:hover,.sbtn.active{background:var(--g4);color:#fff;border-color:var(--g4)}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.38);display:flex;align-items:center;justify-content:center;z-index:300;padding:16px}
+.mbox{background:#fff;border-radius:14px;padding:20px;width:100%;max-width:440px;max-height:88vh;display:flex;flex-direction:column;gap:12px}
+.mbox h3{font-size:16px;font-weight:600;color:var(--g5)}
+.minput{width:100%;padding:8px 10px;border:1px solid var(--g2);border-radius:8px;font-size:14px;outline:none;font-family:inherit}
+.minput:focus{border-color:var(--g4)}
+.mbtn{padding:8px 18px;border-radius:8px;font-size:13px;cursor:pointer;font-weight:600;font-family:inherit}
+.btn-ok{background:var(--g4);color:#fff;border:none}
+.btn-cancel{background:#fff;color:#666;border:1px solid #ccc}
+.btn-row{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.mscroll{overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:7px;max-height:320px}
+.bitem{display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid var(--g2);border-radius:8px;background:var(--g1)}
+.bitem-name{flex:1;font-size:14px;color:var(--g5);font-weight:600}
+.bitem-meta{font-size:11px;color:var(--g4);white-space:nowrap}
+.bitem-actions{display:flex;gap:5px;flex-shrink:0}
+.xbtn{padding:5px 10px;border-radius:6px;font-size:12px;cursor:pointer;border:none;font-weight:600}
+.xedit{background:var(--g4);color:#fff}
+.xdel{background:#ffe0e0;color:#c00}
+.ctabs{display:flex;border-bottom:1.5px solid var(--g2)}
+.ctab{padding:7px 16px;font-size:13px;cursor:pointer;border:none;background:transparent;color:#888;font-weight:600;border-bottom:2.5px solid transparent;margin-bottom:-1.5px;font-family:inherit;transition:color .15s}
+.ctab.active{color:var(--g4);border-bottom-color:var(--g4)}
+.citem{display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--g2);border-radius:7px;background:var(--g1)}
+.citem-name{flex:1;font-size:13px;color:var(--g5)}
+.cdel{padding:4px 9px;border-radius:5px;font-size:11px;cursor:pointer;border:none;background:#ffe0e0;color:#c00;font-weight:600;font-family:inherit}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--g5);color:#fff;padding:8px 20px;border-radius:20px;font-size:13px;z-index:500;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+input[type=file]{display:none}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="topbar">
+    <span style="font-size:18px">&#9889;</span>
+    <h2>Etiquetas de Centros de Carga</h2>
+    <span class="topbar-size" id="topbarSize">24 espacios</span>
+  </div>
+  <div class="label-card">
+    <div class="label-header">
+      <div class="logo-box" id="logoBox" onclick="document.getElementById('fileIn').click()" title="Toca para subir logo">
+        <img id="logoImg" src="" style="display:none">
+        <div class="logo-ph" id="logoPh">&#43; Logo<br>empresa</div>
+      </div>
+      <div class="header-center">
+        <span class="header-label">Centro de carga</span>
+        <input type="text" class="house-name" id="houseName" placeholder="Nombre de la casa / proyecto">
+      </div>
+      <div class="header-right">
+        <span class="header-right-label">Espacios</span>
+        <span class="header-right-val" id="topbarSize2">24</span>
+      </div>
+    </div>
+    <div class="circuits-grid">
+      <div class="circuit-col" id="colLeft"></div>
+      <div class="circuit-col" id="colRight"></div>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="fileIn" accept="image/*">
+
+<div class="fabs">
+  <div class="fab fab-main" onclick="toggleSub()" title="Menú">&#9776;</div>
+  <div class="sub-fabs hidden" id="subFabs">
+    <div class="fab fab-white" onclick="openBodega()" title="Bodega">
+      &#128452;<span class="fab-tip">Bodega</span>
+    </div>
+    <div class="fab fab-white" onclick="saveLabel()" title="Guardar">
+      &#128190;<span class="fab-tip">Guardar</span>
+    </div>
+    <div class="fab fab-white" onclick="newLabel()" title="Nueva etiqueta">
+      &#43;<span class="fab-tip">Nueva etiqueta</span>
+    </div>
+  </div>
+  <div class="fab fab-green" onclick="printPDF()" title="Imprimir PDF">&#128424;</div>
+  <div class="fab fab-green" onclick="toggleSizePicker()" title="Tamaño del tablero">&#128203;</div>
+  <div class="fab fab-white" onclick="openCircuitMgr()" title="Gestionar circuitos">
+    &#9889;<span class="fab-tip">Circuitos</span>
+  </div>
+</div>
+
+<div class="size-picker hidden" id="sizePicker">
+  <p>Tamaño del tablero</p>
+  <div class="size-btns">
+    <button class="sbtn active" onclick="setSize(24)">24</button>
+    <button class="sbtn" onclick="setSize(32)">32</button>
+    <button class="sbtn" onclick="setSize(48)">48</button>
+  </div>
+</div>
+
+<!-- Bodega -->
+<div class="overlay hidden" id="bodegaMod">
+  <div class="mbox">
+    <h3>&#128452; Bodega de etiquetas</h3>
+    <div class="mscroll" id="bodegaList"></div>
+    <div class="btn-row"><button class="mbtn btn-cancel" onclick="closeMod('bodegaMod')">Cerrar</button></div>
+  </div>
+</div>
+
+<!-- Circuit manager -->
+<div class="overlay hidden" id="circuitMod">
+  <div class="mbox">
+    <h3>&#9889; Gestionar circuitos</h3>
+    <div class="ctabs">
+      <button class="ctab active" id="tabAdd" onclick="switchTab('add')">Agregar nuevo</button>
+      <button class="ctab" id="tabList" onclick="switchTab('list')">Lista guardada</button>
+    </div>
+    <div id="panelAdd">
+      <input class="minput" id="newCInput" placeholder="Ej: Tomacorrientes sala, A/C cuarto 1...">
+      <div class="btn-row" style="margin-top:6px">
+        <button class="mbtn btn-cancel" onclick="closeMod('circuitMod')">Cancelar</button>
+        <button class="mbtn btn-ok" onclick="addCircuit()">Agregar</button>
+      </div>
+    </div>
+    <div id="panelList" class="hidden" style="display:flex;flex-direction:column;gap:8px;flex:1;overflow:hidden">
+      <div class="mscroll" id="circuitList"></div>
+      <div class="btn-row"><button class="mbtn btn-cancel" onclick="closeMod('circuitMod')">Cerrar</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm -->
+<div class="overlay hidden" id="confirmMod">
+  <div class="mbox">
+    <h3>&#9888;&#65039; Etiqueta sin guardar</h3>
+    <p style="font-size:13px;color:#555;line-height:1.5">Hay una etiqueta en curso. ¿Qué desea hacer?</p>
+    <div class="btn-row">
+      <button class="mbtn btn-cancel" onclick="closeMod('confirmMod')">Cancelar</button>
+      <button class="mbtn btn-ok" style="background:#888" onclick="doDiscard()">Descartar</button>
+      <button class="mbtn btn-ok" onclick="doSaveNew()">Guardar y nueva</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var sz=24,opts=[],labels=[],curId=null,subOpen=false,sizeOpen=false,logoData='',pendingCb=null;
+
+function ls(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+function lsSet(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+
+function init(){
+  var co=ls('cco');if(co)try{opts=JSON.parse(co);}catch(e){}
+  var sl=ls('ssl');if(sl)try{labels=JSON.parse(sl);}catch(e){}
+  if(!opts.length){
+    opts=['Iluminación sala','Tomacorrientes sala','Iluminación cocina','Tomacorrientes cocina',
+      'A/C cuarto principal','Iluminación cuartos','Tomacorrientes cuartos','Calentador de agua',
+      'Lavadora','Secadora','Panel eléctrico sub','Iluminación exterior',
+      'Timbre / Intercomunicador','Computadoras / Oficina','Refrigerador','Microondas',
+      'Horno eléctrico','Bomba de agua','Garaje','Jardín / Riego'];
+    saveOpts();
+  }
+  buildGrid(sz);
+}
+function saveOpts(){lsSet('cco',JSON.stringify(opts));}
+function saveLabels(){lsSet('ssl',JSON.stringify(labels));}
+
+function buildGrid(n){
+  var L=document.getElementById('colLeft'),R=document.getElementById('colRight');
+  L.innerHTML='';R.innerHTML='';
+  for(var i=1;i<=n;i++){
+    var row=document.createElement('div');row.className='circuit-row';
+    var num=document.createElement('div');num.className='cnum';num.textContent=i;
+    var sel=document.createElement('select');sel.className='csel';sel.id='c'+i;
+    fillSel(sel,'');
+    row.appendChild(num);row.appendChild(sel);
+    (i%2===1?L:R).appendChild(row);
+  }
+}
+function fillSel(sel,cur){
+  sel.innerHTML='<option value="">-- Seleccionar --</option>';
+  opts.forEach(function(o){
+    var op=document.createElement('option');op.value=o;op.textContent=o;
+    if(o===cur)op.selected=true;
+    sel.appendChild(op);
+  });
+  if(cur)sel.value=cur;
+}
+function reloadSels(){for(var i=1;i<=sz;i++){var s=document.getElementById('c'+i);if(s)fillSel(s,s.value);}}
+
+function setSize(n){
+  sz=n;
+  document.getElementById('topbarSize').textContent=n+' espacios';
+  document.getElementById('topbarSize2').textContent=n;
+  document.querySelectorAll('.sbtn').forEach(function(b){b.classList.toggle('active',parseInt(b.textContent)===n);});
+  buildGrid(n);
+  closeSizePicker();
+}
+function toggleSizePicker(){
+  sizeOpen=!sizeOpen;
+  document.getElementById('sizePicker').classList.toggle('hidden',!sizeOpen);
+  if(subOpen)closeSub();
+}
+function closeSizePicker(){sizeOpen=false;document.getElementById('sizePicker').classList.add('hidden');}
+
+function toggleSub(){
+  subOpen=!subOpen;
+  document.getElementById('subFabs').classList.toggle('hidden',!subOpen);
+  if(sizeOpen)closeSizePicker();
+}
+function closeSub(){subOpen=false;document.getElementById('subFabs').classList.add('hidden');}
+
+function openMod(id){document.getElementById(id).classList.remove('hidden');}
+function closeMod(id){document.getElementById(id).classList.add('hidden');}
+
+function getData(){
+  var d={id:curId||Date.now()+'',name:document.getElementById('houseName').value||'Sin nombre',size:sz,logo:logoData,circuits:{}};
+  for(var i=1;i<=sz;i++){var s=document.getElementById('c'+i);if(s)d.circuits[i]=s.value;}
+  return d;
+}
+function hasContent(){
+  if(document.getElementById('houseName').value)return true;
+  for(var i=1;i<=sz;i++){var s=document.getElementById('c'+i);if(s&&s.value)return true;}
+  return false;
+}
+function loadData(d){
+  curId=d.id;sz=d.size||24;
+  document.getElementById('topbarSize').textContent=sz+' espacios';
+  document.getElementById('topbarSize2').textContent=sz;
+  document.getElementById('houseName').value=d.name||'';
+  logoData=d.logo||'';applyLogo();
+  buildGrid(sz);
+  if(d.circuits)Object.keys(d.circuits).forEach(function(k){var s=document.getElementById('c'+k);if(s)fillSel(s,d.circuits[k]);});
+}
+function clearAll(){
+  curId=null;logoData='';
+  document.getElementById('houseName').value='';
+  applyLogo();buildGrid(sz);
+}
+function applyLogo(){
+  var img=document.getElementById('logoImg'),ph=document.getElementById('logoPh');
+  if(logoData){img.src=logoData;img.style.display='block';ph.style.display='none';}
+  else{img.style.display='none';img.src='';ph.style.display='block';}
+}
+
+function saveLabel(){
+  var d=getData();
+  var idx=labels.findIndex(function(l){return l.id===d.id;});
+  if(idx>=0)labels[idx]=d;else labels.push(d);
+  curId=d.id;saveLabels();
+  toast('Guardado: '+d.name);closeSub();
+}
+function newLabel(){
+  closeSub();
+  if(hasContent()){pendingCb=function(){clearAll();};openMod('confirmMod');}
+  else clearAll();
+}
+function doDiscard(){closeMod('confirmMod');if(pendingCb)pendingCb();pendingCb=null;}
+function doSaveNew(){saveLabel();closeMod('confirmMod');clearAll();pendingCb=null;}
+
+function openBodega(){
+  closeSub();
+  var list=document.getElementById('bodegaList');
+  list.innerHTML='';
+  if(!labels.length){
+    list.innerHTML='<p style="font-size:13px;color:#888;text-align:center;padding:24px">No hay etiquetas guardadas</p>';
+  }else{
+    labels.forEach(function(l){
+      var d=document.createElement('div');d.className='bitem';
+      d.innerHTML='<span class="bitem-name">'+esc(l.name)+'</span>'+
+        '<span class="bitem-meta">'+l.size+' esp.</span>'+
+        '<div class="bitem-actions">'+
+          '<button class="xbtn xedit" onclick="loadLabel(\''+l.id+'\')">Abrir</button>'+
+          '<button class="xbtn xdel" onclick="delLabel(\''+l.id+'\')">&#10005;</button>'+
+        '</div>';
+      list.appendChild(d);
+    });
+  }
+  openMod('bodegaMod');
+}
+function loadLabel(id){
+  var l=labels.find(function(x){return x.id===id;});
+  if(l){loadData(l);closeMod('bodegaMod');toast('Cargado: '+l.name);}
+}
+function delLabel(id){
+  if(!confirm('¿Eliminar esta etiqueta?'))return;
+  labels=labels.filter(function(l){return l.id!==id;});
+  saveLabels();if(curId===id)curId=null;
+  openBodega();
+}
+
+var curTab='add';
+function openCircuitMgr(){
+  switchTab('add');
+  document.getElementById('newCInput').value='';
+  openMod('circuitMod');
+}
+function switchTab(t){
+  curTab=t;
+  document.getElementById('tabAdd').classList.toggle('active',t==='add');
+  document.getElementById('tabList').classList.toggle('active',t==='list');
+  var pA=document.getElementById('panelAdd'),pL=document.getElementById('panelList');
+  if(t==='add'){pA.style.display='';pL.style.display='none';}
+  else{pA.style.display='none';pL.style.display='flex';renderCircuitList();}
+}
+function renderCircuitList(){
+  var list=document.getElementById('circuitList');
+  list.innerHTML='';
+  if(!opts.length){
+    list.innerHTML='<p style="font-size:13px;color:#888;text-align:center;padding:20px">La lista está vacía</p>';
+    return;
+  }
+  opts.forEach(function(o,i){
+    var d=document.createElement('div');d.className='citem';
+    d.innerHTML='<span class="citem-name">'+esc(o)+'</span>'+
+      '<button class="cdel" onclick="delCircuit('+i+')">&#10005; Eliminar</button>';
+    list.appendChild(d);
+  });
+}
+function addCircuit(){
+  var v=document.getElementById('newCInput').value.trim();
+  if(!v)return;
+  if(opts.includes(v)){toast('Ya existe esa descripción');return;}
+  opts.push(v);saveOpts();reloadSels();
+  toast('Agregado: '+v);
+  document.getElementById('newCInput').value='';
+}
+function delCircuit(i){
+  var name=opts[i];
+  if(!confirm('¿Eliminar "'+name+'" de la lista?'))return;
+  opts.splice(i,1);saveOpts();reloadSels();renderCircuitList();
+  toast('Eliminado: '+name);
+}
+
+document.getElementById('fileIn').addEventListener('change',function(e){
+  var f=e.target.files[0];if(!f)return;
+  var r=new FileReader();
+  r.onload=function(ev){logoData=ev.target.result;applyLogo();};
+  r.readAsDataURL(f);e.target.value='';
+});
+document.getElementById('newCInput').addEventListener('keydown',function(e){if(e.key==='Enter')addCircuit();});
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.fabs')&&!e.target.closest('#sizePicker')){
+    if(sizeOpen)closeSizePicker();
+  }
+  if(!e.target.closest('.fabs')){
+    if(subOpen)closeSub();
+  }
+});
+
+function toast(msg){
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(t._t);t._t=setTimeout(function(){t.classList.remove('show');},2400);
+}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function printPDF(){
+  var d=getData(),rows='';
+  for(var i=1;i<=d.size;i+=2){
+    var l=i,r=i+1<=d.size?i+1:null;
+    rows+='<tr>'+
+      '<td class="desc right">'+esc(d.circuits[l]||'')+'</td>'+
+      '<td class="num">'+l+'</td><td class="mid"></td>'+
+      (r?'<td class="num">'+r+'</td><td class="desc">'+esc(d.circuits[r]||'')+'</td>':'<td></td><td class="desc"></td>')+
+    '</tr>';
+  }
+  var logo=d.logo
+    ?'<img src="'+d.logo+'" style="width:52px;height:52px;object-fit:contain;display:block">'
+    :'<div style="width:52px;height:52px;border:1.5px dashed rgba(255,255,255,0.35);border-radius:6px"></div>';
+
+  var html='<!DOCTYPE html><html><head><meta charset="utf-8"><title>'+esc(d.name)+'</title><style>'+
+  '@page{size:letter portrait;margin:0}'+
+  '*{box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}'+
+  'body{font-family:Arial,sans-serif;background:#fff;display:flex;justify-content:center;padding:10mm 0}'+
+  /* Label card: 15cm wide, auto height */
+  '.card{width:150mm;border:1px solid #c8e6c9;border-radius:8px;overflow:hidden;background:#fff}'+
+  /* Header: matches app UI — dark green bar */
+  '.hdr{display:flex;align-items:stretch;background:#1b5e20;min-height:62px}'+
+  '.hlogo{width:62px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.09);border-right:1px solid rgba(255,255,255,0.14);padding:5px}'+
+  '.hcenter{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 10px;gap:2px}'+
+  '.hsubtitle{font-size:5.5pt;font-weight:700;letter-spacing:2.5px;color:rgba(255,255,255,0.5);text-transform:uppercase}'+
+  '.htitle{font-size:13pt;font-weight:700;color:#fff;text-align:center;letter-spacing:.4px}'+
+  /* Table */
+  'table{width:100%;border-collapse:collapse}'+
+  'tr{border-bottom:.5px solid #e8f5e9}'+
+  'tr:last-child{border-bottom:none}'+
+  'td{padding:2px 4px;font-size:7pt;vertical-align:middle;line-height:1.3}'+
+  'td.num{width:20px;text-align:center;font-weight:700;color:#1b5e20;font-size:8pt;background:#e8f5e9}'+
+  'td.desc{color:#333}'+
+  'td.right{text-align:right}'+
+  'td.mid{width:8px;background:#fff;border-left:2px solid #388e3c;padding:0}'+
+  '</style></head><body>'+
+  '<div class="card">'+
+    '<div class="hdr">'+
+      '<div class="hlogo">'+logo+'</div>'+
+      '<div class="hcenter">'+
+        '<div class="hsubtitle">Centro de carga</div>'+
+        '<div class="htitle">'+esc(d.name)+'</div>'+
+      '</div>'+
+    '</div>'+
+    '<table>'+rows+'</table>'+
+  '</div>'+
+  '</body></html>';
+
+  var w=window.open('','_blank');
+  if(!w){toast('Active ventanas emergentes para imprimir');return;}
+  w.document.write(html);w.document.close();
+  w.onload=function(){setTimeout(function(){w.print();},300);};
+}
+
+init();
+</script>
+</body>
+</html>
