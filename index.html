@@ -2,7 +2,12 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Etiquetas CC">
+<meta name="theme-color" content="#1b5e20">
 <title>Etiquetas de Centros de Carga</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -97,6 +102,17 @@ body{font-family:Arial,sans-serif;background:#f0f7f0;min-height:100vh}
 .spinner{width:18px;height:18px;border:2px solid var(--g2);border-top-color:var(--g4);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
 @keyframes spin{to{transform:rotate(360deg)}}
 input[type=file]{display:none}
+body{overflow-x:hidden}
+.csel{flex:1;min-width:0;font-size:12px;padding:4px 6px;border:1px solid var(--g2);border-radius:6px;background:#fff;color:#333;outline:none;height:28px;cursor:pointer}
+@media(max-width:400px){
+  .fab-item{min-width:42px;padding:4px 2px}
+  .fab-icon{width:38px;height:38px;font-size:16px}
+  .fab-lbl{font-size:9px}
+  .app{padding:10px;padding-bottom:90px}
+}
+@media(max-width:340px){
+  .circuits-grid{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
@@ -133,6 +149,7 @@ input[type=file]{display:none}
 </div>
 
 <input type="file" id="fileIn" accept="image/*">
+<input type="file" id="defLogoIn" accept="image/*">
 
 <!-- Bottom action bar -->
 <div class="fab-bar">
@@ -193,6 +210,18 @@ input[type=file]{display:none}
     </div>
     <label style="font-size:12px;color:var(--g5);font-weight:600">URL del Apps Script</label>
     <input class="minput" id="scriptUrl" placeholder="https://script.google.com/macros/s/.../exec">
+    <label style="font-size:12px;color:var(--g5);font-weight:600">Logo predeterminado</label>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div id="defLogoBox" onclick="document.getElementById('defLogoIn').click()" title="Toca para cambiar logo"
+        style="width:52px;height:52px;border:1.5px dashed var(--g3);border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden;cursor:pointer;flex-shrink:0;background:var(--g1)">
+        <img id="defLogoImg" src="" style="display:none;width:100%;height:100%;object-fit:contain">
+        <span id="defLogoPh" style="font-size:9px;color:var(--g4);text-align:center;line-height:1.4">＋<br>Logo</span>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:5px">
+        <span style="font-size:11px;color:#888;line-height:1.5">Se aplica automáticamente a cada etiqueta nueva. Se guarda en este dispositivo.</span>
+        <button class="mbtn btn-cancel" onclick="clearDefaultLogo()" style="font-size:11px;padding:4px 10px;align-self:flex-start">✕ Quitar logo</button>
+      </div>
+    </div>
     <div class="btn-row">
       <button class="mbtn btn-cancel" onclick="resetSetup()" style="font-size:12px">Restaurar por defecto</button>
       <button class="mbtn btn-cancel" onclick="closeMod('setupMod')">Cancelar</button>
@@ -253,7 +282,7 @@ input[type=file]{display:none}
 <script>
 /* ── State ─────────────────────────────────────────────────── */
 var sz=24, opts=[], labels=[], curId=null;
-var subOpen=false, sizeOpen=false, logoData='', pendingCb=null;
+var subOpen=false, sizeOpen=false, logoData='', defaultLogoData='', pendingCb=null;
 var DEFAULT_URL='https://script.google.com/macros/s/AKfycbzqc3m_SWF297_ej2WLz21Wtng7EqFJAwrY6ESRq3VUeAVndpcYzrfJp1y4hX9kwcKm_Q/exec';
 var SCRIPT_URL='';
 var saveTimer=null;
@@ -339,7 +368,16 @@ function cloudSaveCircuits(){
 function openSetup(){
   closeMod('bodegaMod');
   document.getElementById('scriptUrl').value=SCRIPT_URL||DEFAULT_URL;
+  applyDefLogo();
   openMod('setupMod');
+}
+function applyDefLogo(){
+  var img=document.getElementById('defLogoImg'),ph=document.getElementById('defLogoPh');
+  if(defaultLogoData){img.src=defaultLogoData;img.style.display='block';ph.style.display='none';}
+  else{img.style.display='none';img.src='';ph.style.display='block';}
+}
+function clearDefaultLogo(){
+  defaultLogoData='';lsSet('defaultLogo','');applyDefLogo();toast('Logo predeterminado eliminado');
 }
 function saveSetup(){
   var url=document.getElementById('scriptUrl').value.trim();
@@ -362,6 +400,7 @@ function resetSetup(){
 /* ── Init ───────────────────────────────────────────────────── */
 function init(){
   SCRIPT_URL=lsGet('gsUrl')||DEFAULT_URL;
+  defaultLogoData=lsGet('defaultLogo')||'';
   buildGrid(sz);
   cloudLoad();
 }
@@ -447,7 +486,7 @@ function loadData(d){
   });
 }
 function clearAll(){
-  curId=null;logoData='';
+  curId=null;logoData=defaultLogoData;
   document.getElementById('houseName').value='';
   applyLogo();buildGrid(sz);
 }
@@ -564,6 +603,12 @@ document.getElementById('fileIn').addEventListener('change',function(e){
   var f=e.target.files[0];if(!f)return;
   var r=new FileReader();
   r.onload=function(ev){logoData=ev.target.result;applyLogo();};
+  r.readAsDataURL(f);e.target.value='';
+});
+document.getElementById('defLogoIn').addEventListener('change',function(e){
+  var f=e.target.files[0];if(!f)return;
+  var r=new FileReader();
+  r.onload=function(ev){defaultLogoData=ev.target.result;lsSet('defaultLogo',defaultLogoData);applyDefLogo();toast('✓ Logo predeterminado guardado');};
   r.readAsDataURL(f);e.target.value='';
 });
 document.getElementById('newCInput').addEventListener('keydown',function(e){if(e.key==='Enter')addCircuit();});
